@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Login should match the snapshot 1`] = `
+<View
+  style={
+    Object {
+      "alignItems": "center",
+      "flex": 1,
+      "justifyContent": "center",
+      "paddingHorizontal": 40,
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "borderRadius": 5,
+          "padding": 16,
+          "width": "100%",
+        },
+        Object {
+          "elevation": 5,
+          "shadowColor": "#000000",
+          "shadowOffset": Object {
+            "height": 2,
+            "width": 0,
+          },
+          "shadowOpacity": 0.25,
+          "shadowRadius": 3.84,
+        },
+        Object {
+          "backgroundColor": "rgb(0, 122, 255)",
+        },
+      ]
+    }
+  >
+    <View
+      style={
+        Object {
+          "borderBottomWidth": 0.5,
+          "marginBottom": 16,
+          "paddingBottom": 8,
+          "paddingTop": 24,
+        }
+      }
+    >
+      <Text
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "color": "gray",
+              "left": 8,
+              "position": "absolute",
+              "top": 0,
+            },
+            Object {
+              "opacity": 1,
+              "transform": Array [
+                Object {
+                  "scale": 1,
+                },
+                Object {
+                  "translateX": -0,
+                },
+                Object {
+                  "translateY": 24,
+                },
+              ],
+            },
+          ]
+        }
+      >
+        Username
+      </Text>
+      <TextInput
+        accessibilityHint="Enter your username"
+        accessibilityLabel="Username"
+        autoCapitalize="none"
+        onBlur={[Function]}
+        onChangeText={[Function]}
+        onFocus={[Function]}
+        style={
+          Object {
+            "paddingHorizontal": 8,
+          }
+        }
+        value=""
+      />
+    </View>
+    <View
+      style={
+        Object {
+          "borderBottomWidth": 0.5,
+          "marginBottom": 16,
+          "paddingBottom": 8,
+          "paddingTop": 24,
+        }
+      }
+    >
+      <Text
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "color": "gray",
+              "left": 8,
+              "position": "absolute",
+              "top": 0,
+            },
+            Object {
+              "opacity": 1,
+              "transform": Array [
+                Object {
+                  "scale": 1,
+                },
+                Object {
+                  "translateX": -0,
+                },
+                Object {
+                  "translateY": 24,
+                },
+              ],
+            },
+          ]
+        }
+      >
+        Password
+      </Text>
+      <TextInput
+        accessibilityHint="Enter your password"
+        accessibilityLabel="Password"
+        autoCapitalize="none"
+        onBlur={[Function]}
+        onChangeText={[Function]}
+        onFocus={[Function]}
+        secureTextEntry={true}
+        style={
+          Object {
+            "paddingHorizontal": 8,
+          }
+        }
+        textContentType="password"
+        value=""
+      />
+    </View>
+    <View
+      accessible={true}
+      collapsable={false}
+      focusable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "borderColor": "rgb(216, 216, 216)",
+          "borderRadius": 5,
+          "borderWidth": 1,
+          "justifyContent": "center",
+          "marginTop": 24,
+          "opacity": 1,
+          "padding": 10,
+          "width": "100%",
+        }
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "rgb(28, 28, 30)",
+            },
+            Object {
+              "fontSize": 16,
+              "fontWeight": "700",
+            },
+            null,
+          ]
+        }
+      >
+        Login
+      </Text>
+    </View>
+  </View>
+</View>
+`;
