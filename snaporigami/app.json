@@ -1,11 +1,17 @@
 {
   "expo": {
-    "plugins": [[
-      "@viro-community/react-viro",
-      {
-        "androidXrMode": ["GVR", "AR", "OVR_MOBILE"]
-      }
-    ]],
+    "plugins": [
+      [
+        "@viro-community/react-viro",
+        {
+          "androidXrMode": [
+            "GVR",
+            "AR",
+            "OVR_MOBILE"
+          ]
+        }
+      ]
+    ],
     "name": "snaporigami",
     "slug": "snaporigami",
     "version": "1.0.0",
@@ -27,7 +33,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.notts.snaporigami"
     },
     "web": {
       "favicon": "./assets/favicon.png"
