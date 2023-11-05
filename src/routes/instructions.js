@@ -81,7 +81,7 @@ function Instructions() {
 						currentStep
 					}
 					alt={"Image Overlay of step" + currentStep}
-					className="absolute inset-0 opacity-50 w-full h-full"
+					className="absolute inset-0 object-cover opacity-50 w-full h-full"
 				></img>
 			</div>
 
