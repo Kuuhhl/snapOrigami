@@ -47,7 +47,7 @@ function Instructions() {
 		).then((diff) => {
 			console.log(diff);
 		});
-	}, [img]);
+	}, [img, currentStep, instructionUUID]);
 
 	return (
 		<div className="flex flex-col gap-3 items-center m-2">
