@@ -82,14 +82,8 @@ function Instructions() {
 	}, [currentStep, instructionUUID]);
 
 	return (
-		<div className="flex flex-col gap-3 items-center p-4 bg-gradient-to-b from-blue-600 to-blue-900 text-white">
+		<div className="flex flex-col h-screen gap-3 items-center p-4 bg-gradient-to-b from-blue-600 to-blue-900 text-white">
 			<MainMenuLink />
-			<h1 className="font-bold text-4xl mt-8 mb-6 ">
-				{selectedInstruction
-					? selectedInstruction.name
-					: "Instruction not found"}
-			</h1>
-			<b>{"Mismatch percentage: " + misMatchPercentage}</b>
 			<div className="relative">
 				<Webcam
 					imageSmoothing={true}
@@ -103,6 +97,20 @@ function Instructions() {
 					height={referenceImageDimensions.height}
 					width={referenceImageDimensions.width}
 				/>
+
+				{/*Title*/}
+				<h1 className="ml-2 absolute top-0 left-0 font-bold text-4xl mt-8 mb-6 ">
+					{selectedInstruction
+						? selectedInstruction.name
+						: "Instruction not found"}
+				</h1>
+
+				{/* Stats Overlay  */}
+				<div className="absolute flex flex-col gap-1 text-right top-0 right-0 font-thin text-xs">
+					<b>Recognizing Completion of Step {currentStep}...</b>
+					<b>{"Mismatch percentage: " + misMatchPercentage}</b>
+					<b>{"Threshold: 75.0"}</b>
+				</div>
 
 				{/* Image Overlay */}
 				<img
