@@ -54,7 +54,7 @@ function Instructions() {
 	}, [img, currentStep, instructionUUID]);
 
 	useEffect(() => {
-		const mismatchThreshold = 50.0;
+		const mismatchThreshold = 75.0;
 		if (misMatchPercentage <= mismatchThreshold) {
 			// go to next step
 			window.location.href = `/instructions/${instructionUUID}/${
