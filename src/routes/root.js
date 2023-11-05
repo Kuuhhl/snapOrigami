@@ -20,7 +20,7 @@ function Root() {
 					placeholder="Search by name"
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
-					className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none w-1/2"
+					className="border border-gray-300 rounded-md px-4 py-2 focus:outline-none md:w-1/2"
 				/>
 				{filteredInstructions.length > 0 ? (
 					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">

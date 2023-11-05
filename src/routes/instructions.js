@@ -8,6 +8,9 @@ import MainMenuLink from "../components/MainMenuLink";
 function Instructions() {
 	const [misMatchPercentage, setMismatchPercentage] = useState(100.0);
 	const [img, setImg] = useState(null);
+	const [referenceImageDimensions, setReferenceImageDimensions] = useState(
+		{}
+	);
 	const webcamRef = useRef(null);
 
 	const takeScreenshot = useCallback(() => {
@@ -59,6 +62,25 @@ function Instructions() {
 			}`;
 		}
 	});
+	useEffect(() => {
+		const setImageSize = (setReferenceImageDimensions) => {
+			const img = new Image();
+			img.src =
+				process.env.PUBLIC_URL +
+				"/images/" +
+				instructionUUID +
+				"/" +
+				currentStep;
+			img.onload = () => {
+				console.log(img.width, img.height);
+				setReferenceImageDimensions({
+					height: img.height,
+					width: img.width,
+				});
+			};
+		};
+		setImageSize(setReferenceImageDimensions);
+	}, [currentStep, instructionUUID]);
 
 	return (
 		<div className="flex flex-col gap-3 items-center p-4 bg-gradient-to-b from-blue-600 to-blue-900 text-white">
