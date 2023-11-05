@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 function MainMenuLink() {
 	return (
-		<Link className="bg-slate-300 rounded-xl p-2" to={"/"}>
+		<Link className="underline p-2 hover:translate-y-1 transition" to={"/"}>
 			Back to Main Menu
 		</Link>
 	);

@@ -25,7 +25,7 @@ function Instructions() {
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			takeScreenshot();
-		}, 500);
+		}, 200);
 
 		return () => {
 			clearInterval(intervalId);
@@ -50,8 +50,18 @@ function Instructions() {
 		});
 	}, [img, currentStep, instructionUUID]);
 
+	useEffect(() => {
+		const mismatchThreshold = 50.0;
+		if (misMatchPercentage <= mismatchThreshold) {
+			// go to next step
+			window.location.href = `/instructions/${instructionUUID}/${
+				Number.parseInt(currentStep) + 1
+			}`;
+		}
+	});
+
 	return (
-		<div className="flex flex-col gap-3 items-center m-2">
+		<div className="flex flex-col gap-3 items-center p-4 bg-gradient-to-b from-blue-600 to-blue-900 text-white">
 			<MainMenuLink />
 			<h1 className="font-bold text-4xl mt-8 mb-6 ">
 				{selectedInstruction
@@ -69,9 +79,11 @@ function Instructions() {
 					}}
 					ref={webcamRef}
 					screenshotFormat="img/png"
-					height={1000}
-					width={1000}
+					height={window.innerHeight}
+					width={window.innerWidth}
 				/>
+
+				{/* Image Overlay */}
 				<img
 					src={
 						process.env.PUBLIC_URL +
@@ -81,25 +93,32 @@ function Instructions() {
 						currentStep
 					}
 					alt={"Image Overlay of step" + currentStep}
-					className="absolute inset-0 object-cover opacity-50 w-full h-full"
+					className="absolute inset-0 object-cover w-full h-full mix-blend-multiply opacity-50"
 				></img>
+
+				<div className="absolute inset-x-0 bottom-0 flex w-full gap-5 rounded-xl items-center p-4 bg-white/40 backdrop-filter backdrop-blur-sm">
+					<img
+						src={
+							process.env.PUBLIC_URL +
+							"/images/" +
+							instructionUUID +
+							"/" +
+							currentStep
+						}
+						alt={"Image of step " + currentStep}
+						className="w-24  rounded-xl"
+					/>
+					<div className="flex flex-col gap-2">
+						<h1 className="text-xl font-bold">
+							Step {currentStep}
+						</h1>
+						<div>
+							{selectedInstruction.steps[currentStep - 1].desc}
+						</div>
+					</div>
+				</div>
 			</div>
 
-			<div className="flex flex-col items-center">
-				<img
-					src={
-						process.env.PUBLIC_URL +
-						"/images/" +
-						instructionUUID +
-						"/" +
-						currentStep
-					}
-					alt={"Image of step " + currentStep}
-					className="w-24 mb-4"
-				/>
-				<h1 className="text-xl font-bold">Step {currentStep}</h1>
-				<div>{selectedInstruction.steps[currentStep - 1].desc}</div>
-			</div>
 			{selectedInstruction.steps.length > currentStep ? (
 				<Link
 					to={`/instructions/${instructionUUID}/${

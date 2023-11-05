@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 function ListItem(props) {
 	return (
 		<Link to={"/instructions/" + props.uuid + "/1"}>
-			<div className="flex flex-col items-center p-4 bg-slate-300 rounded-lg hover:bg-slate-400 transition ">
+			<div className="flex flex-col gap-2 rounded-xl items-center p-4 bg-white/40 backdrop-filter backdrop-blur-sm hover:bg-white/50 transition duration-200">
 				<img
 					src={props.image}
 					alt=""
-					className="w-16 h-16 rounded-lg"
+					className="w-full h-full rounded-lg"
 				/>
-				<h1 className="mr-4 font-bold ">{props.title}</h1>
-				<p className="font-thinner ">{props.difficulty}</p>
+				<h1 className="font-bold text-xl">{props.title}</h1>
+				<p className="font-thin text-sm">{props.difficulty}</p>
 			</div>
 		</Link>
 	);
