@@ -72,7 +72,6 @@ function Instructions() {
 				"/" +
 				currentStep;
 			img.onload = () => {
-				console.log(img.width, img.height);
 				setReferenceImageDimensions({
 					height: img.height,
 					width: img.width,
@@ -101,8 +100,8 @@ function Instructions() {
 					}}
 					ref={webcamRef}
 					screenshotFormat="img/png"
-					height={window.innerHeight}
-					width={window.innerWidth}
+					height={referenceImageDimensions.height}
+					width={referenceImageDimensions.width}
 				/>
 
 				{/* Image Overlay */}
