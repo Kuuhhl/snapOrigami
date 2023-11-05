@@ -6,6 +6,7 @@ import compareImages from "../utils/compareImages";
 import MainMenuLink from "../components/MainMenuLink";
 
 function Instructions() {
+	const [misMatchPercentage, setMismatchPercentage] = useState(100.0);
 	const [img, setImg] = useState(null);
 	const webcamRef = useRef(null);
 
@@ -24,7 +25,7 @@ function Instructions() {
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			takeScreenshot();
-		}, 1000);
+		}, 500);
 
 		return () => {
 			clearInterval(intervalId);
@@ -45,7 +46,7 @@ function Instructions() {
 				"/" +
 				currentStep
 		).then((diff) => {
-			console.log(diff);
+			setMismatchPercentage(diff.misMatchPercentage);
 		});
 	}, [img, currentStep, instructionUUID]);
 
@@ -57,6 +58,7 @@ function Instructions() {
 					? selectedInstruction.name
 					: "Instruction not found"}
 			</h1>
+			<b>{"Mismatch percentage: " + misMatchPercentage}</b>
 			<div className="relative">
 				<Webcam
 					imageSmoothing={true}
