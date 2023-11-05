@@ -17,6 +17,12 @@
   </a>
 </div>
 
+## Screenshots
+
+<div align="center">
+  <img src="screenshot-1.png" alt="Screenshot 1" width="300" style="margin-right: 20px;">
+  <img src="screenshot-2.png" alt="Screenshot 2" width="300" style="margin-left: 20px;">
+</div>
 
 
 ## Developing
