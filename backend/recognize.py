@@ -1,7 +1,9 @@
 import cv2
+import imutils
 import numpy
 import base64
 import time
+import imutils
 
 
 class ImageComparer:
@@ -20,32 +22,55 @@ class ImageComparer:
         self.score = None
 
     def compare_images(self):
+        total_start_time = time.time()
+        start_time = time.time()
+
         self.load_images()
+        print("Time taken to load images: %s seconds" % (time.time() - start_time))
+
+        start_time = time.time()
         self.get_contours()
-        self.align_images_and_contours()
+        print("Time taken to get contours: %s seconds" % (time.time() - start_time))
+
+        start_time = time.time()
         self.draw_contours()
-        self.overlay_images()
+        print("Time taken to draw contours: %s seconds" % (time.time() - start_time))
+
+        start_time = time.time()
         self.compute_contour_difference_score()
+        print(
+            "Time taken to compute contour difference score: %s seconds"
+            % (time.time() - start_time)
+        )
+
+        start_time = time.time()
+        self.overlay_images()
+        print("Time taken to overlay images: %s seconds" % (time.time() - start_time))
+
+        cv2.imwrite("overlay.png", self.overlay)
+        print(f"Total time: {time.time() - total_start_time} seconds")
 
     def load_images(self):
         if self.img1_path is not None and self.img2_path is not None:
-            self.img1 = cv2.resize(cv2.imread(self.img1_path), (500, 500))
-            self.img2 = cv2.resize(cv2.imread(self.img2_path), (500, 500))
+            self.img1 = cv2.imread(self.img1_path)
+            self.img2 = cv2.imread(self.img2_path)
         elif self.img1_base64 is not None and self.img2_base64 is not None:
-            self.img1 = cv2.resize(
-                cv2.imdecode(
-                    numpy.frombuffer(base64.b64decode(self.img1_base64), numpy.uint8),
-                    cv2.IMREAD_COLOR,
-                ),
-                (500, 500),
+            self.img1 = cv2.imdecode(
+                numpy.frombuffer(base64.b64decode(self.img1_base64), numpy.uint8),
+                cv2.IMREAD_COLOR,
             )
-            self.img2 = cv2.resize(
-                cv2.imdecode(
-                    numpy.frombuffer(base64.b64decode(self.img2_base64), numpy.uint8),
-                    cv2.IMREAD_COLOR,
-                ),
-                (500, 500),
+
+            self.img2 = cv2.imdecode(
+                numpy.frombuffer(base64.b64decode(self.img2_base64), numpy.uint8),
+                cv2.IMREAD_COLOR,
             )
+
+        # Resize image1 to image2 width while maintaining aspect ratio
+        self.img1 = imutils.resize(self.img1, width=self.img2.shape[1])
+
+        # Crop image1 height so that it has the same dimensions as image2
+        if self.img1.shape[0] > self.img2.shape[0]:
+            self.img1 = self.img1[: self.img2.shape[0], :]
 
     def get_contours(self):
         self.img1, self.contour1 = self.get_contour(self.img1)
@@ -74,6 +99,19 @@ class ImageComparer:
 
     def overlay_images(self):
         self.overlay = cv2.addWeighted(self.img1, 0.5, self.img2, 0.5, 0)
+
+        # overlay score on the image
+        if self.score is not None:
+            cv2.putText(
+                self.overlay,
+                "Score: " + str(self.score),
+                (10, 30),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 0, 0),
+                2,
+                cv2.LINE_AA,
+            )
 
     def compute_contour_difference_score(self):
         if self.contour1 is not None and self.contour2 is not None:
@@ -143,7 +181,7 @@ class ImageComparer:
                 continue  # this contour is the border of the image, so skip it
 
             # approximate the contour
-            epsilon = 0.005 * cv2.arcLength(contour, True)
+            epsilon = 0.05 * cv2.arcLength(contour, True)
             approx_contour = cv2.approxPolyDP(contour, epsilon, True)
 
             return img, approx_contour

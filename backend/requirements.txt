@@ -3,4 +3,5 @@ Flask-SocketIO
 Flask-Cors
 opencv-python
 numpy
+imutils
 

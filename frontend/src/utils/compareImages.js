@@ -1,30 +1,30 @@
-import io from "socket.io-client";
-
 function compareImages(image1Base64, image2Base64) {
 	return new Promise((resolve, reject) => {
 		if (!image1Base64 || !image2Base64) {
 			reject("Missing image(s)");
+			return;
 		}
 
-		const apiUrl = "http://localhost:5000";
-
-		const socket = io(apiUrl);
+		const apiUrl = "http://localhost:5000/compareImages";
 
 		const images = {
 			image1: image1Base64,
 			image2: image2Base64,
 		};
 
-		socket.emit("compareImages", images);
-
-		socket.on("compareResult", function (data) {
-			resolve(data);
-		});
-
-		socket.on("connect_error", function (err) {
-			console.error("Error:", err);
-			reject(err);
-		});
+		fetch(apiUrl, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(images),
+		})
+			.then((response) => response.json())
+			.then((data) => resolve(data))
+			.catch((err) => {
+				console.error("Error:", err);
+				reject(err);
+			});
 	});
 }
 

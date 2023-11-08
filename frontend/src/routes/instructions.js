@@ -6,8 +6,11 @@ import compareImages from "../utils/compareImages";
 import MainMenuLink from "../components/MainMenuLink";
 
 function Instructions() {
-	const [score, setScore] = useState(0.0);
+	const acceptanceThreshhold = 0.1;
+	const [score, setScore] = useState(999.999);
 	const [WebcamImgBase64, setWebcamImgBase64] = useState(null);
+	const [accepted, setAccepted] = useState(false);
+	const [acceptanceCounter, setAcceptanceCounter] = useState(0);
 
 	const [referenceImageDimensions, setReferenceImageDimensions] = useState({
 		height: 0,
@@ -16,7 +19,12 @@ function Instructions() {
 	const webcamRef = useRef(null);
 
 	const takeScreenshot = useCallback(() => {
-		const imageBase64 = webcamRef.current.getScreenshot();
+		const imageBase64 = webcamRef.current.getScreenshot({
+			width: referenceImageDimensions.width / 10,
+			height: referenceImageDimensions.height / 10,
+			screenshotFormat: "image/png",
+			screenshotQuality: 0.2,
+		});
 		setWebcamImgBase64(imageBase64);
 	}, []);
 
@@ -27,16 +35,30 @@ function Instructions() {
 		(instruction) => instruction.uuid === instructionUUID
 	);
 
-	// every second
+	// every webcam frame
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			takeScreenshot();
-		}, 5000);
+		}, 50);
 
 		return () => {
 			clearInterval(intervalId);
 		};
 	}, [takeScreenshot]);
+
+	// update acceptance counter / accepted
+	useEffect(() => {
+		if (score && score <= acceptanceThreshhold) {
+			setAcceptanceCounter((prevCounter) => prevCounter + 1);
+			// 1 second
+			if (acceptanceCounter >= 20) {
+				setAccepted(true);
+			}
+		} else {
+			setAcceptanceCounter(0);
+			setAccepted(false);
+		}
+	}, [score]);
 
 	// every webcam frame
 	useEffect(() => {
@@ -48,17 +70,6 @@ function Instructions() {
 				console.error(error);
 			});
 	}, [WebcamImgBase64, referenceImgBase64]);
-
-	// every time mismatch percentage changes
-	useEffect(() => {
-		const scoreThreshold = 99999;
-		if (score >= scoreThreshold) {
-			// go to next step
-			window.location.href = `/instructions/${instructionUUID}/${
-				Number.parseInt(currentStep) + 1
-			}`;
-		}
-	}, [score]);
 
 	// get reference image base64
 	useEffect(() => {
@@ -95,6 +106,14 @@ function Instructions() {
 	return (
 		<div className="flex flex-col h-screen gap-3 items-center p-4 bg-gradient-to-b from-blue-600 to-blue-900 text-white">
 			<MainMenuLink />
+			{accepted && (
+				<h1 className="text-4xl font-bold text-green-400">Accepted!</h1>
+			)}
+			{acceptanceCounter >= 1 && !accepted && (
+				<h1 className="text-4xl font-bold text-yellow-400">
+					Verifying...
+				</h1>
+			)}
 			<div className="relative">
 				<Webcam
 					imageSmoothing={true}
@@ -107,6 +126,7 @@ function Instructions() {
 					screenshotFormat="img/png"
 					height={referenceImageDimensions.height}
 					width={referenceImageDimensions.width}
+					className="w-full h-full object-cover"
 				/>
 
 				{/* Overlay Header */}
@@ -122,7 +142,12 @@ function Instructions() {
 					<div className="flex flex-col gap-1 md:text-right font-thin text-xs">
 						<b>Recognizing Completion of Step {currentStep}...</b>
 						<b>{"Score: " + score}</b>
-						<b>{"Threshold: 100.0"}</b>
+						<b>{"Threshold: " + acceptanceThreshhold}</b>
+						<b>
+							{"Acceptance Counter: " +
+								acceptanceCounter +
+								" seconds"}
+						</b>
 					</div>
 				</div>
 
