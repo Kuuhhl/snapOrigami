@@ -118,16 +118,17 @@ class ImageComparer:
 
     @staticmethod
     def get_contour(img):
-        # to greyscale
+        # Convert the image to grayscale
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        # apply binary thresholding
-        ret, thresh = cv2.threshold(img_gray, 127, 255, cv2.THRESH_BINARY)
+        # Apply blur
+        img_blur = cv2.blur(img_gray, (100, 100))
 
-        # find contours of image
-        contours, hierarchy = cv2.findContours(
-            image=thresh, mode=cv2.RETR_TREE, method=cv2.CHAIN_APPROX_SIMPLE
-        )
+        # Apply adaptive thresholding
+        _, thresh = cv2.threshold(img_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+        # Find contours
+        contours, _ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
         # sort contours by area in descending order
         contours = sorted(contours, key=cv2.contourArea, reverse=True)
@@ -142,8 +143,9 @@ class ImageComparer:
                 continue  # this contour is the border of the image, so skip it
 
             # approximate the contour
-            epsilon = 0.01 * cv2.arcLength(contour, True)
+            epsilon = 0.005 * cv2.arcLength(contour, True)
             approx_contour = cv2.approxPolyDP(contour, epsilon, True)
+
             return img, approx_contour
 
         return img, None  # no suitable contour found
@@ -157,13 +159,15 @@ class ImageComparer:
 
 # testing code with phone webcam
 if __name__ == "__main__":
-    # Open the webcam
-    cap = cv2.VideoCapture(4)
-
-    # Check if the webcam is opened correctly
-    if not cap.isOpened():
-        raise IOError("Cannot open webcam")
     while True:
+        # Open the webcam
+        cap = cv2.VideoCapture(0)
+
+        # Check if the webcam is opened correctly
+        if not cap.isOpened():
+            raise IOError("Cannot open webcam")
+        else:
+            print("Webcam opened successfully")
         # Capture a frame from the webcam
         ret, frame = cap.read()
 
@@ -178,7 +182,9 @@ if __name__ == "__main__":
             cv2.drawContours(frame, [contour], -1, (0, 255, 0), 3)
 
         # Save the frame with the drawn contour
-        cv2.imwrite("webcam_contour.png", frame)
-        time.sleep(1)
-    # Close the webcam
-    cap.release()
+        cv2.imwrite("output.png", frame)
+
+        # Close the webcam
+        cap.release()
+
+        time.sleep(5)
