@@ -235,7 +235,7 @@ function Instructions() {
 						</h1>
 						{/* Stats Overlay  */}
 						<div className="flex flex-col gap-1 md:text-right font-thin text-xs">
-							{!backendIsOnline ? (
+							{backendIsOnline ? (
 								<>
 									<b>
 										Recognizing Completion of Step{" "}
@@ -255,7 +255,7 @@ function Instructions() {
 									)}
 								</>
 							) : (
-								<b>Offline Mode</b>
+								<span className="font-bold">Offline Mode</span>
 							)}
 						</div>
 					</div>
