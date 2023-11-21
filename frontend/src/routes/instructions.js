@@ -24,7 +24,8 @@ function Instructions() {
 	const checkBackend = useCallback(() => {
 		fetch(
 			`${
-				process.env.SNAP_ORIGAMI_BACKEND_BASE_URL || "localhost:5000"
+				process.env.SNAP_ORIGAMI_BACKEND_BASE_URL ||
+				"http://localhost:5000"
 			}/ping`
 		)
 			.then((response) => {

@@ -6,7 +6,7 @@ function compareImages(image1Base64, image2Base64) {
 		}
 
 		const apiUrl = `${
-			process.env.SNAP_ORIGAMI_BACKEND_BASE_URL || "localhost:5000"
+			process.env.SNAP_ORIGAMI_BACKEND_BASE_URL || "http://localhost:5000"
 		}/compareImages`;
 
 		const images = {
