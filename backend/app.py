@@ -64,4 +64,4 @@ def handle_image():
 if __name__ == "__main__":
     port = 5000
     print(f"Running on port {port}")
-    app.run(port=port)
+    app.run(host="0.0.0.0", port=port)
