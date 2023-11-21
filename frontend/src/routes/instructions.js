@@ -124,7 +124,7 @@ function Instructions() {
 			setAcceptanceCounter(0);
 			setAccepted(false);
 		}
-	}, [score, acceptanceCounter, backendIsOnline]);
+	}, [score, acceptanceCounter, backendIsOnline, acceptanceThreshhold]);
 
 	// every webcam frame
 	useEffect(() => {
