@@ -51,8 +51,8 @@ def handle_image():
     # try to compare the images
     try:
         comparer.compare_images()
-    except UnclearContourException as exc:
-        return {"error": exc}, 400
+    except UnclearContourException:
+        return {"error": "One of the images did not have a clear contour."}, 400
 
     # Get the score
     score = comparer.score
