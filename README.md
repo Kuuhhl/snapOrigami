@@ -23,6 +23,13 @@
 </div>
 </div>
 
+## Screenshots
+
+<div align="center">
+  <img src="frontend/screenshot-1.png" alt="Screenshot 1" width="300" style="margin-right: 20px;">
+  <img src="frontend/screenshot-2.png" alt="Screenshot 2" width="300" style="margin-left: 20px;">
+</div>
+
 ## What does it do?
 
 SnapOrigami serves as a helpful companion in your origami learning journey, providing real-time guidance and error detection.
@@ -31,12 +38,9 @@ By recognizing your current step in the origami folding process, it automaticall
 
 This interactive approach not only prevents incorrect folds but also enhances the learning experience by providing immediate feedback.
 
-## Screenshots
+## Credits
 
-<div align="center">
-  <img src="frontend/screenshot-1.png" alt="Screenshot 1" width="300" style="margin-right: 20px;">
-  <img src="frontend/screenshot-2.png" alt="Screenshot 2" width="300" style="margin-left: 20px;">
-</div>
+* The Origami Instructions are originally from [https://origami.guide/](https://origami.guide/).
 
 ## Contributors
 
