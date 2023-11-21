@@ -27,6 +27,12 @@ jobs:
       - name: Production build
         run: npm run build
         working-directory: frontend
+        
+      - name: Upload build
+        uses: actions/upload-artifact@v2
+        with:
+          name: build
+          path: frontend/build
 
   deploy_to_s3:
     runs-on: ubuntu-latest
@@ -36,7 +42,13 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v2
-
+        
+      - name: Download build
+        uses: actions/download-artifact@v2
+        with:
+          name: build
+          path: frontend/build
+          
       - name: Deploy to S3
         uses: jakejarvis/s3-sync-action@master
         with:
