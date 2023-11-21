@@ -9,6 +9,11 @@ import { PuffLoader } from "react-spinners";
 
 function Instructions() {
 	const [webcamLoaded, setWebcamLoaded] = useState(false);
+	const [backendBaseUrl, setBackendBaseUrl] = useState(
+		`${
+			process.env.SNAP_ORIGAMI_BACKEND_BASE_URL || "http://localhost:5000"
+		}`
+	);
 	const [backendIsOnline, setBackendIsOnline] = useState(false);
 	const [acceptanceThreshhold, setAcceptanceThreshold] = useState(0.05);
 	const [score, setScore] = useState(999.999);
@@ -23,12 +28,7 @@ function Instructions() {
 	});
 	const webcamRef = useRef(null);
 	const checkBackend = useCallback(() => {
-		fetch(
-			`${
-				process.env.SNAP_ORIGAMI_BACKEND_BASE_URL ||
-				"http://localhost:5000"
-			}/ping`
-		)
+		fetch(`${backendBaseUrl}/ping`)
 			.then((response) => {
 				if (!response.ok) {
 					setBackendIsOnline(false);
@@ -39,7 +39,7 @@ function Instructions() {
 			.catch((error) => {
 				setBackendIsOnline(false);
 			});
-	}, []);
+	}, [backendBaseUrl]);
 
 	useEffect(() => {
 		checkBackend();
@@ -164,7 +164,7 @@ function Instructions() {
 		if (parseInt(currentStep) >= selectedInstruction.steps.length) {
 			return;
 		}
-		compareImages(WebcamImgBase64, referenceImgBase64)
+		compareImages(WebcamImgBase64, referenceImgBase64, backendBaseUrl)
 			.then((data) => {
 				setScore(data.score);
 			})
@@ -184,6 +184,7 @@ function Instructions() {
 		selectedInstruction.steps.length,
 		currentStep,
 		backendIsOnline,
+		backendBaseUrl,
 	]);
 
 	// get reference image base64
@@ -355,6 +356,30 @@ function Instructions() {
 						</p>
 						<MainMenuLink />
 					</>
+				)}
+				{!backendIsOnline && (
+					<button
+						onClick={() => {
+							let url = prompt(
+								"Enter Custom Backend URL",
+								backendBaseUrl
+							);
+							if (url) {
+								// Create a URL object
+								let urlObj = new URL(url);
+								// Reconstruct the URL without search parameters
+								url =
+									urlObj.protocol +
+									"//" +
+									urlObj.hostname +
+									(urlObj.port ? ":" + urlObj.port : "");
+
+								setBackendBaseUrl(url);
+							}
+						}}
+					>
+						Specify Custom Backend URL
+					</button>
 				)}
 			</div>
 		</>

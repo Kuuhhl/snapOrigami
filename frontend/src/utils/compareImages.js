@@ -1,13 +1,11 @@
-function compareImages(image1Base64, image2Base64) {
+function compareImages(image1Base64, image2Base64, backendBaseUrl) {
 	return new Promise((resolve, reject) => {
 		if (!image1Base64 || !image2Base64) {
 			reject("Missing image(s)");
 			return;
 		}
 
-		const apiUrl = `${
-			process.env.SNAP_ORIGAMI_BACKEND_BASE_URL || "http://localhost:5000"
-		}/compareImages`;
+		const apiUrl = `${backendBaseUrl}/compareImages`;
 
 		const images = {
 			image1: image1Base64,
