@@ -49,12 +49,12 @@ class ImageComparer:
             )
 
         # resize images to 500 pixel width
-        self.img1 = imutils.resize(self.img1, width=500)
-        self.img2 = imutils.resize(self.img2, width=500)
+        self.img1 = imutils.resize(self.img1, width=1000)
+        self.img2 = imutils.resize(self.img2, width=1000)
 
     def get_contours(self):
-        self.img1, self.contour1 = self.get_contour(self.img1)
-        self.img2, self.contour2 = self.get_contour(self.img2)
+        self.contour1 = self.get_contour(self.img1)
+        self.contour2 = self.get_contour(self.img2)
 
     def draw_contours(self):
         if self.contour1 is not None:
@@ -100,7 +100,7 @@ class ImageComparer:
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Apply blur
-        img_blur = cv2.blur(img_gray, (50, 50))
+        img_blur = cv2.blur(img_gray, (10, 10))
 
         # Apply adaptive thresholding
         _, thresh = cv2.threshold(img_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -111,7 +111,7 @@ class ImageComparer:
         # sort contours by area in descending order
         contours = sorted(contours, key=cv2.contourArea, reverse=True)
 
-        # iterate over the contours
+        # get the largest contour
         for contour in contours:
             # get the bounding rectangle of the contour
             x, y, w, h = cv2.boundingRect(contour)
@@ -121,12 +121,12 @@ class ImageComparer:
                 continue  # this contour is the border of the image, so skip it
 
             # approximate the contour
-            epsilon = 0.05 * cv2.arcLength(contour, True)
-            approx_contour = cv2.approxPolyDP(contour, epsilon, True)
+            peri = cv2.arcLength(contour, True)
+            approx_contour = cv2.approxPolyDP(contour, 0.01 * peri, True)
 
-            return img, approx_contour
+            return approx_contour
 
-        return img, None  # no suitable contour found
+        return None
 
     @staticmethod
     def contour_difference(contour1, contour2):
@@ -153,7 +153,7 @@ if __name__ == "__main__":
         comparer = ImageComparer()
 
         # Get the contour of the captured frame
-        _, contour = comparer.get_contour(frame)
+        contour = comparer.get_contour(frame)
 
         # Draw the contour on the frame
         if contour is not None:

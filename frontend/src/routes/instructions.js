@@ -15,7 +15,7 @@ function Instructions() {
 		}`
 	);
 	const [backendIsOnline, setBackendIsOnline] = useState(false);
-	const [acceptanceThreshhold, setAcceptanceThreshold] = useState(0.05);
+	const [acceptanceThreshhold, setAcceptanceThreshold] = useState(0.15);
 	const [score, setScore] = useState(999.999);
 	const [WebcamImgBase64, setWebcamImgBase64] = useState(null);
 	const [accepted, setAccepted] = useState(false);
@@ -127,14 +127,15 @@ function Instructions() {
 				// 1 second
 				if (newCounter >= 20) {
 					setAccepted(true);
+					setAcceptanceCounter(0);
 					console.log(
 						`Accepted step ${Number.parseInt(currentStep) + 1}`
 					);
-					navigate(
-						`/instructions/${instructionUUID}/${
-							Number.parseInt(currentStep) + 1
-						}`
-					);
+					// navigate(
+					// 	`/instructions/${instructionUUID}/${
+					// 		Number.parseInt(currentStep) + 1
+					// 	}`
+					// );
 				}
 				return newCounter;
 			});
@@ -152,6 +153,12 @@ function Instructions() {
 		navigate,
 		selectedInstruction.steps.length,
 	]);
+
+	useEffect(() => {
+		setAccepted(false);
+		setScore(999.999);
+		setAcceptanceCounter(0);
+	}, [currentStep]);
 
 	// every webcam frame
 	useEffect(() => {
