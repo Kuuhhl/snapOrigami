@@ -18,6 +18,11 @@
   <img src="screenshot-2.png" alt="Screenshot 2" width="300" style="margin-left: 20px;">
 </div>
 
+## Setting a default Backend-URL
+
+The default Backend URL is `https://localhost:5000`. 
+
+If yours is different, set the environment variable `SNAP_ORIGAMI_BACKEND_BASE_URL` to your desired value.
 
 ## Developing
 
