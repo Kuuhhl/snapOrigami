@@ -3,7 +3,12 @@ import imutils
 import numpy
 import base64
 import time
-import imutils
+
+
+class UnclearContourException(Exception):
+    def __init__(self, message="One of the images did not have a clear contour."):
+        self.message = message
+        super().__init__(self.message)
 
 
 class ImageComparer:
@@ -22,70 +27,34 @@ class ImageComparer:
         self.score = None
 
     def compare_images(self):
-        total_start_time = time.time()
-        start_time = time.time()
-
         self.load_images()
-        print("Time taken to load images: %s seconds" % (time.time() - start_time))
-
-        start_time = time.time()
         self.get_contours()
-        print("Time taken to get contours: %s seconds" % (time.time() - start_time))
-
-        start_time = time.time()
         self.draw_contours()
-        print("Time taken to draw contours: %s seconds" % (time.time() - start_time))
-
-        start_time = time.time()
         self.compute_contour_difference_score()
-        print(
-            "Time taken to compute contour difference score: %s seconds"
-            % (time.time() - start_time)
-        )
-
-        start_time = time.time()
-        self.overlay_images()
-        print("Time taken to overlay images: %s seconds" % (time.time() - start_time))
-
-        cv2.imwrite("overlay.png", self.overlay)
-        print(f"Total time: {time.time() - total_start_time} seconds")
 
     def load_images(self):
+        # load from file
         if self.img1_path is not None and self.img2_path is not None:
             self.img1 = cv2.imread(self.img1_path)
             self.img2 = cv2.imread(self.img2_path)
+        # load from base64
         elif self.img1_base64 is not None and self.img2_base64 is not None:
             self.img1 = cv2.imdecode(
                 numpy.frombuffer(base64.b64decode(self.img1_base64), numpy.uint8),
                 cv2.IMREAD_COLOR,
             )
-
             self.img2 = cv2.imdecode(
                 numpy.frombuffer(base64.b64decode(self.img2_base64), numpy.uint8),
                 cv2.IMREAD_COLOR,
             )
 
-        # Resize image1 to image2 width while maintaining aspect ratio
-        self.img1 = imutils.resize(self.img1, width=self.img2.shape[1])
-
-        # Crop image1 height so that it has the same dimensions as image2
-        if self.img1.shape[0] > self.img2.shape[0]:
-            self.img1 = self.img1[: self.img2.shape[0], :]
+        # resize images to 500 pixel width
+        self.img1 = imutils.resize(self.img1, width=500)
+        self.img2 = imutils.resize(self.img2, width=500)
 
     def get_contours(self):
         self.img1, self.contour1 = self.get_contour(self.img1)
         self.img2, self.contour2 = self.get_contour(self.img2)
-
-    def align_images_and_contours(self):
-        if self.contour1 is not None and self.contour2 is not None:
-            (
-                self.img1,
-                self.img2,
-                self.contour1,
-                self.contour2,
-            ) = self.align_images_and_contours_helper(
-                self.img1, self.img2, self.contour1, self.contour2
-            )
 
     def draw_contours(self):
         if self.contour1 is not None:
@@ -98,6 +67,12 @@ class ImageComparer:
             )  # Draw contour2 in red
 
     def overlay_images(self):
+        # Resize image1 to image2 width while maintaining aspect ratio
+        self.img1 = imutils.resize(self.img1, width=self.img2.shape[1])
+
+        # Crop image1 height so that it has the same dimensions as image2
+        if self.img1.shape[0] > self.img2.shape[0]:
+            self.img1 = self.img1[: self.img2.shape[0], :]
         self.overlay = cv2.addWeighted(self.img1, 0.5, self.img2, 0.5, 0)
 
         # overlay score on the image
@@ -116,43 +91,8 @@ class ImageComparer:
     def compute_contour_difference_score(self):
         if self.contour1 is not None and self.contour2 is not None:
             self.score = self.contour_difference(self.contour1, self.contour2)
-            print("Contour difference score:", self.score)
-        else:
-            print("No suitable contours found.")
-
-    @staticmethod
-    def align_images_and_contours_helper(img1, img2, contour1, contour2):
-        # Compute the moments of the two contours
-        M1 = cv2.moments(contour1)
-        M2 = cv2.moments(contour2)
-
-        # Calculate the centroid of each contour
-        cx1 = int(M1["m10"] / M1["m00"])
-        cy1 = int(M1["m01"] / M1["m00"])
-        cx2 = int(M2["m10"] / M2["m00"])
-        cy2 = int(M2["m01"] / M2["m00"])
-
-        # Calculate the angle between the two centroids
-        dY = cy2 - cy1
-        dX = cx2 - cx1
-        angle = numpy.arctan2(dY, dX) * 180 / numpy.pi
-
-        # Rotate img2 to align the images
-        M = cv2.getRotationMatrix2D((cx2, cy2), -angle, 1)
-        img2 = cv2.warpAffine(img2, M, (img2.shape[1], img2.shape[0]))
-
-        # Rotate contour2 to align the contours
-        contour2 = cv2.transform(contour2, M)
-
-        # Scale and move img2 and contour2 to match img1 and contour1
-        scale = cv2.contourArea(contour1) / cv2.contourArea(contour2)
-        M = numpy.float32(
-            [[scale, 0, cx1 - cx2 * scale], [0, scale, cy1 - cy2 * scale]]
-        )
-        img2 = cv2.warpAffine(img2, M, (img2.shape[1], img2.shape[0]))
-        contour2 = cv2.transform(contour2, M)
-
-        return img1, img2, contour1, contour2
+            return
+        raise UnclearContourException()
 
     @staticmethod
     def get_contour(img):
@@ -160,7 +100,7 @@ class ImageComparer:
         img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         # Apply blur
-        img_blur = cv2.blur(img_gray, (100, 100))
+        img_blur = cv2.blur(img_gray, (50, 50))
 
         # Apply adaptive thresholding
         _, thresh = cv2.threshold(img_blur, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -191,11 +131,10 @@ class ImageComparer:
     @staticmethod
     def contour_difference(contour1, contour2):
         # compute the Hu Moments similarity score
-        score = cv2.matchShapes(contour1, contour2, cv2.CONTOURS_MATCH_I1, 0.0)
-        return score
+        return cv2.matchShapes(contour1, contour2, cv2.CONTOURS_MATCH_I1, 0.0)
 
 
-# testing code with phone webcam
+# testing contour code with webcam
 if __name__ == "__main__":
     while True:
         # Open the webcam
@@ -204,8 +143,9 @@ if __name__ == "__main__":
         # Check if the webcam is opened correctly
         if not cap.isOpened():
             raise IOError("Cannot open webcam")
-        else:
-            print("Webcam opened successfully")
+
+        print("Webcam opened successfully")
+
         # Capture a frame from the webcam
         ret, frame = cap.read()
 
@@ -225,4 +165,4 @@ if __name__ == "__main__":
         # Close the webcam
         cap.release()
 
-        time.sleep(5)
+        time.sleep(1)

@@ -1,5 +1,4 @@
 Flask
-Flask-SocketIO
 Flask-Cors
 opencv-python
 numpy
