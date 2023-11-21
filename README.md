@@ -11,17 +11,24 @@
 <p align="center">
   <img src="frontend/public/icon.png" alt="Logo" width="120" height="120" style="border-radius:15%;">
   <h3 align="center">SnapOrigami - AR Origami Guide</h3>
-  <p align="center">An app that guides the user through making origami.</p>
+  <p align="center">Bring interactive, step-by-step origami guidance directly into your camera view.</p>
 </p>
 <div align="center" style="display: flex; flex-direction: column; gap: 0.5em;">
   <a href="https://snaporigami.kuuhhl.live/">
-    <img src="https://img.shields.io/badge/Try Demo-00358a?style=for-the-badge&logo=google-chrome&logoColor=white">
+    <img src="https://img.shields.io/badge/Try-00358a?style=for-the-badge&logo=google-chrome&logoColor=white">
   </a>
   <a href="https://devpost.com/software/snaporigami">
     <img src="https://img.shields.io/badge/View Devpost-000000?style=for-the-badge&logo=devpost&logoColor=white">
   </a>
 </div>
 </div>
+
+## How to use
+
+1. Either load up my [demo frontend instance](https://snaporigami.kuuhhl.live/) or [set up your own](https://github.com/Kuuhhl/snapOrigami/tree/main/frontend).
+2. Find a backend instance or [set up your own](https://github.com/Kuuhhl/snapOrigami/tree/main/backend).
+3. Tap on any of the origami creatures to open the instructions.
+4. Set your Backend URL using the button on the bottom of the page.
 
 ## Screenshots
 
