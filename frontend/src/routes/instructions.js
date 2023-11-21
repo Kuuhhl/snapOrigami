@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState, useEffect } from "react";
 import Webcam from "react-webcam";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import instructions from "../data/instructions.json";
 import compareImages from "../utils/compareImages";
 import MainMenuLink from "../components/MainMenuLink";
@@ -15,6 +15,7 @@ function Instructions() {
 	const [WebcamImgBase64, setWebcamImgBase64] = useState(null);
 	const [accepted, setAccepted] = useState(false);
 	const [acceptanceCounter, setAcceptanceCounter] = useState(0);
+	const navigate = useNavigate();
 
 	const [referenceImageDimensions, setReferenceImageDimensions] = useState({
 		height: 0,
@@ -115,21 +116,52 @@ function Instructions() {
 		if (!backendIsOnline) {
 			return;
 		}
+
+		if (parseInt(currentStep) >= selectedInstruction.steps.length) {
+			return;
+		}
+
 		if (score && score <= acceptanceThreshhold) {
-			setAcceptanceCounter((prevCounter) => prevCounter + 1);
-			// 1 second
-			if (acceptanceCounter >= 20) {
-				setAccepted(true);
-			}
+			setAcceptanceCounter((prevCounter) => {
+				const newCounter = prevCounter + 1;
+				// 1 second
+				if (newCounter >= 20) {
+					setAccepted(true);
+					console.log(
+						`Accepted step ${Number.parseInt(currentStep) + 1}`
+					);
+					navigate(
+						`/instructions/${instructionUUID}/${
+							Number.parseInt(currentStep) + 1
+						}`
+					);
+				}
+				return newCounter;
+			});
 		} else {
 			setAcceptanceCounter(0);
 			setAccepted(false);
 		}
-	}, [score, acceptanceCounter, backendIsOnline, acceptanceThreshhold]);
+	}, [
+		score,
+		acceptanceCounter,
+		backendIsOnline,
+		acceptanceThreshhold,
+		currentStep,
+		instructionUUID,
+		navigate,
+		selectedInstruction.steps.length,
+	]);
 
 	// every webcam frame
 	useEffect(() => {
 		if (!webcamLoaded || !WebcamImgBase64 || !referenceImgBase64) {
+			return;
+		}
+		if (!backendIsOnline) {
+			return;
+		}
+		if (parseInt(currentStep) >= selectedInstruction.steps.length) {
 			return;
 		}
 		compareImages(WebcamImgBase64, referenceImgBase64)
@@ -145,7 +177,14 @@ function Instructions() {
 				// show other errors
 				console.error(error);
 			});
-	}, [WebcamImgBase64, referenceImgBase64, webcamLoaded]);
+	}, [
+		WebcamImgBase64,
+		referenceImgBase64,
+		webcamLoaded,
+		selectedInstruction.steps.length,
+		currentStep,
+		backendIsOnline,
+	]);
 
 	// get reference image base64
 	useEffect(() => {
@@ -178,6 +217,12 @@ function Instructions() {
 			});
 		};
 	}, [referenceImgBase64]);
+
+	const getArticle = (name) => {
+		if (!name) return "a";
+		const firstLetter = name[0].toLowerCase();
+		return "aeiou".includes(firstLetter) ? "an" : "a";
+	};
 
 	return (
 		<>
@@ -237,24 +282,31 @@ function Instructions() {
 						{/* Stats Overlay  */}
 						<div className="flex flex-col gap-1 md:text-right font-thin text-xs">
 							{backendIsOnline ? (
-								<>
-									<b>
-										Recognizing Completion of Step{" "}
-										{currentStep}
-										...
-									</b>
-									<b>{"Score: " + score}</b>
-									<b>
-										{"Threshold: " + acceptanceThreshhold}
-									</b>
-									{acceptanceCounter > 0 && (
+								selectedInstruction.steps.length >
+									currentStep && (
+									<>
 										<b>
-											{"Acceptance Counter: " +
-												acceptanceCounter +
-												" frames"}
+											Recognizing Completion of Step{" "}
+											{currentStep}
+											...
 										</b>
-									)}
-								</>
+										<b>
+											{"Score: " +
+												parseFloat(score).toFixed(4)}
+										</b>
+										<b>
+											{"Threshold: " +
+												acceptanceThreshhold}
+										</b>
+										{acceptanceCounter > 0 && (
+											<b>
+												{"Acceptance Counter: " +
+													acceptanceCounter +
+													" frames"}
+											</b>
+										)}
+									</>
+								)
 							) : (
 								<span className="font-bold">Offline Mode</span>
 							)}
@@ -295,7 +347,14 @@ function Instructions() {
 						{backendIsOnline ? "Continue manually" : "Continue"}
 					</Link>
 				) : (
-					<MainMenuLink />
+					<>
+						<p className="bg-white/20 backdrop-filter backdrop-blur-sm p-4 rounded-xl">
+							Congratulations! You successfully folded{" "}
+							{getArticle(selectedInstruction.name)}{" "}
+							{selectedInstruction.name}.
+						</p>
+						<MainMenuLink />
+					</>
 				)}
 			</div>
 		</>
