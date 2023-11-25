@@ -12,12 +12,17 @@
   <p align="center">Backend of SnapOrigami.</p>
 </p>
 
+<img src="overlay.png" alt="Visualization of Countour Shape Comparison" width="300">
+
+*Visualization of Contour Shape Comparison*
+
 ## Purpose
 
-The Backend is responsible for running the step recognition part of the Web App. 
+The Backend is responsible for running the step recognition part of the Web App.
 It tries to find the contour of the paper, comparing it to the reference contour.
 The final similarity score is sent to the frontend, so that it can go to the next stage when
 the user finished their step.
+
 
 ## Deploying via Docker
 
